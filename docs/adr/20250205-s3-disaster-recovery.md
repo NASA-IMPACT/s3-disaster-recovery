@@ -162,6 +162,7 @@ CRR involves replicating the data to a different AWS region, incurring additiona
     - Annual Cost: 1024 GB x 0.023/month *12 = $282.60
 - Data Transfer Costs: 
     - 1024 GB x $0.02 = $20.48
+
 Total Annual Cost = <span style="color:red">$303.08 </span>  
 
 ### Option 2: S3 Same-Region Replication (SRR) with Versioning
