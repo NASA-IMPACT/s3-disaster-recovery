@@ -56,7 +56,7 @@ CRR requires S3 Versioning to be enabled on both the source and destination buck
 
 
 
-### Option 2: S3 Same-Region Replication (SRR) with Versioning (<span style="color:red">Mid-Cost</span>)
+### Option 2: S3 Same-Region Replication (SRR) with Versioning (<span style="color:red">Affordable</span>)
 
 AWS Same-Region Replication (SRR) is an Amazon S3 feature that automatically replicates objects within the same AWS region from a source bucket to a destination bucket. When Versioning is enabled, multiple versions of an object are maintained, allowing for data recovery in case of accidental overwrites or deletions.
 
@@ -110,7 +110,7 @@ AWS Backup is a fully managed backup service that provides centralized backup ma
 - Validation: Once the restore is complete, AWS Backup provides status updates, ensuring that the restore operation was successful and that the data integrity is maintained.
 
 
-### Option 4: Periodic S3 Backups to Another Bucket (<span style="color:red">Affordable</span>)
+### Option 4: Periodic S3 Backups to Another Bucket (<span style="color:red">Mid-Cost</span>)
 
 Leverage the existing Self Managed Apache Airflow (SM2A) to orchestrate and automate the backup and restore process for S3 data. Airflow DAGs (Directed Acyclic Graphs) can be used to schedule and manage workflows that perform regular backups of S3 buckets to other S3 bucket.
 
@@ -219,51 +219,51 @@ Total Annual Cost = <span style="color:red">$345.12 </span>
 <table style="border-collapse: collapse; width: 100%; border: 1px solid #0000FF;">
   <thead>
     <tr style="background-color: #f2f2f2; border-bottom: 2px solid #0000FF;">
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Backup Method</th>
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Storage Cost (1 TB/year)</th>
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Data Transfer Cost (Yearly)</th>
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Compute Cost (Airflow, etc.)</th>
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">API Request Cost (Yearly)</th>
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Restore Cost per TB</th>
-      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Total Annual Cost</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">Backup Method</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">Storage Cost (1 TB/year)</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">Data Transfer Cost (Yearly)</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">Compute Cost (Airflow, etc.)</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">API Request Cost (Yearly)</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">Restore Cost per TB</th>
+      <th style="border: 1px solid #0000FF; padding: 5px; text-align: center;">Total Annual Cost</th>
     </tr>
   </thead>
   <tbody>
     <tr style="border-bottom: 1px solid #0000FF;">
-      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 1: Cross-Region Replication (CRR) with Versioning</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$282.62</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$245.76</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$60 (PUT requests)</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$245.76</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$834.14</span></td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"> <strong>Option 1: Cross-Region Replication (CRR) with Versioning</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$282.62</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$245.76</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$60 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$245.76</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"><span style="color:red">$834.14</span></td>
     </tr>
     <tr style="border-bottom: 1px solid #0000FF;">
-      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 2: S3 Same-Region Replication (SRR) with Versioning</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$282.62</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$60 (PUT requests)</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">Free</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$342.62</span></td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"> <strong>Option 2: S3 Same-Region Replication (SRR) with Versioning</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$282.62</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$0</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$60 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">Free</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"><span style="color:red">$342.62</span></td>
     </tr>
     <tr style="border-bottom: 1px solid #0000FF;">
-      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 3: S3 Backup and Restore using AWS Backup</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$614.4</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$218.4 (Backup API)</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$20.48</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$853.28</span></td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"> <strong>Option 3: S3 Backup and Restore using AWS Backup</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$614.4</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$218.4 (Backup API)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$20.48</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"><span style="color:red">$853.28</span></td>
     </tr>
     <tr>
-      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 4: Periodic S3 Backups to Another Bucket</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$282.60</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">N/A (Reusing SM2A workers)</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$62.52 (PUT requests + Lambda)</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">Free</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$345.14</span></td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"> <strong>Option 4: Periodic S3 Backups to Another Bucket</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$282.60</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$0</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">N/A (Reusing SM2A workers)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$62.52 (PUT requests + Lambda)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">Free</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"><span style="color:red">$345.14</span></td>
     </tr>
   </tbody>
 </table>
