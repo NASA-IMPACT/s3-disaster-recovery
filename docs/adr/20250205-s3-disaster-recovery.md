@@ -258,7 +258,7 @@ Total Annual Cost = <span style="color:red">$345.12 </span>
     </tr>
     <tr>
       <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 4: Periodic S3 Backups to Another Bucket</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$162.60</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$282.60</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">N/A (Reusing SM2A workers)</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$62.52 (PUT requests + Lambda)</td>
