@@ -29,7 +29,7 @@ To address this, various DR solutions must be evaluated based on cost, recovery 
 
 ## Considered Options
 
-### Option 1: Cross-Region Replication (CRR) with Versioning (<span style="color:red">Most Costly</span>)
+### Option 1: Cross-Region Replication (CRR) with Versioning (<span style="color:red">High Cost</span>)
 AWS Cross-Region Replication (CRR) is an Amazon S3 feature that automatically replicates objects from a source bucket in one AWS region to a destination bucket in a different AWS region. CRR ensures data redundancy, enhances disaster recovery, and improves data accessibility across geographically distributed locations.
 
 CRR requires S3 Versioning to be enabled on both the source and destination buckets. Versioning helps retain multiple versions of an object, preventing accidental deletions or overwrites from permanently losing data.
@@ -84,7 +84,7 @@ SRR is particularly useful for data redundancy, compliance, access control, and 
 - If a specific object version is permanently deleted, it is not replicated unless explicitly configured.
 
 
-### Option 3: S3 Backup and Restore using AWS Backup (<span style="color:red">Cheap</span>)
+### Option 3: S3 Backup and Restore using AWS Backup (<span style="color:red">Most Costly</span>)
 AWS Backup is a fully managed backup service that provides centralized backup management across AWS services, including Amazon S3. By using AWS Backup, you can protect your S3 data by creating automated backup schedules, applying retention policies, and ensuring that your data can be restored efficiently in the event of data loss, corruption, or deletion. AWS Backup offers a simple and scalable solution for backing up large datasets and helps maintain data integrity with compliance controls for industries that require robust backup strategies.
 
 #### How it works
@@ -158,44 +158,120 @@ The following cost estimates are based on standard AWS pricing as of the latest 
 ### Option 1: Cross-Region Replication (CRR) with Versioning
 CRR involves replicating the data to a different AWS region, incurring additional storage and data transfer costs.
 - Storage Costs:
-    - 1TB in destination region = 1024 GB
-    - Annual Cost: 1024 GB x 0.023/month *12 = $282.60
-- Data Transfer Costs: 
-    - 1024 GB x $0.02 = $20.48
+    - 1TB in the destination bucket = 1024 GB
+    - $0.023 per GB per month *1024 * 12  =  $282.62 per year
+- Data Transfer Costs:
+    - $0.02 per GB per month * 1024 = $245.76 per year
+- API Request Costs:
+    - ~ $60.00 per year (for PUT requests)
+- Restore Costs:
+    - $0.02 per GB per month * 1024 = $245.76 per year (Cross-Region Transfer Back to Original Region)
 
-Total Annual Cost = <span style="color:red">$303.08 </span>  
+Total Annual Cost = <span style="color:red">$834.14 </span>  
 
 ### Option 2: S3 Same-Region Replication (SRR) with Versioning
 
 SRR replicates data within the same region, eliminating cross-region transfer costs.
 - Storage Costs:
-    - 1TB in destination region = 1024 GB
-    - Annual Cost: 1024 GB x 0.023/month *12 = $282.60
-
-Total Annual Cost = <span style="color:red">$282.60 </span> 
+    - 1TB in the destination bucket = 1024 GB
+    - $0.023 per GB per month *1024 *12 = $282.62 per year
+- Data Transfer Costs:
+    - $0 (Replication within the same region is free)
+- API Request Costs:
+    - ~ $60.00 per year (for PUT requests)
+- Restore Costs:
+    - Free (Data is within the same region)
+Total Annual Cost = <span style="color:red">$342.62</span>
 
 ### Option 3: S3 Backup and Restore using AWS Backup
 
-AWS Backup provides centralized backup management, with separate costs for backup storage.
+AWS Backup provides automated backups with centralized management, compliance tracking, and vault storage.
 - Storage Costs:
-    - 1TB in backup storage = 1024 GB
-    - Annual Cost: 1024 GB x 0.01/month *12 = $122.88
+    - 1TB in the backup vault = 1024 GB
+    - $0.05 per GB * 1024 *12  = $614.4 per year
+- Data Transfer Costs:
+    - N/A (Stored in AWS Backup vault)
+- API Request Costs:
+    - ~ $218.4 per year (for backup operations)
+- Restore Costs:
+    - $0.02 per GB * 1024 = $20.48 (restoring 1TB)
 
-Total Annual Cost = <span style="color:red">$122.88 </span> 
+Total Annual Cost = <span style="color:red">$583.28 </span> 
 
 ### Option 4: Periodic S3 Backups to Another Bucket
+
 This strategy uses an existing workflow to periodically copy data to another S3 bucket, including S3 event notifications and Lambda executions.
 - Storage Costs:
     - 1TB in destination region = 1024 GB
     - Annual Cost: 1024 GB x 0.023/month *12 = $282.60
+- API Request Costs:
+    - ~ $60.00 per year (for PUT requests)
 - S3 Event Notification:
     - Typically low or no cost, as S3 events themselves do not incur charges, but triggering services like Lambda might.
 - Lambda Executions:
-Assume 1 million requests per month and minimal compute time (e.g., 128MB, 100ms execution time per request)
+    - Assume 1 million requests per month and minimal compute time (e.g., 128MB, 100ms execution time per request)
     - Annual Request and Compute Cost: 1 million requests x 0.21/millionrequests * 12 = $2.52
-Total Annual Cost = <span style="color:red">$285.12 </span>
+
+Total Annual Cost = <span style="color:red">$345.12 </span>
+
+## Estimated Cost Table
+
+<table style="border-collapse: collapse; width: 100%; border: 1px solid #0000FF;">
+  <thead>
+    <tr style="background-color: #f2f2f2; border-bottom: 2px solid #0000FF;">
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Backup Method</th>
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Storage Cost (1 TB/year)</th>
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Data Transfer Cost (Yearly)</th>
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Compute Cost (Airflow, etc.)</th>
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">API Request Cost (Yearly)</th>
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Restore Cost per TB</th>
+      <th style="border: 1px solid #0000FF; padding: 8px; text-align: center;">Total Annual Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom: 1px solid #0000FF;">
+      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 1: Cross-Region Replication (CRR) with Versioning</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$282.62</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$245.76</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$60.00 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$245.76</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$834.14</span></td>
+    </tr>
+    <tr style="border-bottom: 1px solid #0000FF;">
+      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 2: S3 Same-Region Replication (SRR) with Versioning</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$282.62</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$60.00 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">Free</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$342.62</span></td>
+    </tr>
+    <tr style="border-bottom: 1px solid #0000FF;">
+      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 3: S3 Backup and Restore using AWS Backup</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$614.40</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$218.40 (Backup API)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$20.48</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$583.28</span></td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 4: Periodic S3 Backups to Another Bucket</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$282.60</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$120</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$60.00 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">Free</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$345.12</span></td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## Pros and Cons of the Options
+
+### Option 1: S3 Cross-Region Replication (CRR) with Versioning
 
 #### Pros:
 - Prevent Ransomware or Malicious Deletes
@@ -209,6 +285,8 @@ Total Annual Cost = <span style="color:red">$285.12 </span>
 - High storage and replication costs.
 - Adding data transfer, and request costs for replication and versioning.
 - Requires proper policy configuration, versioning strategy, and lifecycle rules to avoid excessive costs.
+- Replicating existing objects needs custom configuration (S3 Batch Replication)
+- Need to develop a logic of the restoration.
 
 
 ### Option 2: S3 Same-Region Replication (SRR) with Versioning
@@ -225,6 +303,8 @@ Total Annual Cost = <span style="color:red">$285.12 </span>
 - High storage and replication costs.
 - Does not help in case of a full-region outage.
 - Requires proper policy configuration, versioning strategy, and lifecycle rules to avoid excessive costs.
+- Replicating existing objects needs custom configuration (S3 Batch Replication).
+- Need to develop a logic of the restoration. 
 
 
 ### Option 3: S3 Backup and Restore using AWS Backup
@@ -238,9 +318,11 @@ Total Annual Cost = <span style="color:red">$285.12 </span>
 
 
 #### Cons:
+- The most expensive option.
 - High storage and replication costs.
 - Does not help in case of a full-region outage.
 - Requires proper policy configuration, versioning strategy, and lifecycle rules to avoid excessive costs.
+
 
 
 ### Option 4: Periodic S3 Backups to Another Bucket
@@ -255,3 +337,10 @@ Total Annual Cost = <span style="color:red">$285.12 </span>
 - Requires monitoring and maintaining Airflow DAGs and Lambda functions.
 - If backup frequency is too low, recent changes may not be included in the latest backup.
 - Copying large volumes of data periodically may impact performance of Airflow
+
+
+## Links
+- [s3-backup](https://n2ws.com/blog/aws-cloud/s3-backup)
+- [s3-pricing](https://aws.amazon.com/s3/pricing/)
+- [s3-backup-pricing](https://aws.amazon.com/backup/pricing/)
+- [s3-replication](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html)
