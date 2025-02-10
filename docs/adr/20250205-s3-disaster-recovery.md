@@ -8,7 +8,7 @@
 
 ## Context and Problem Statement
 
-Several projects rely on Amazon S3 as the primary data store for critical functionality, including analysis and visualization. However, unforeseen events such as accidental deletions, data corruption, or regional outages pose significant risks to data availability and integrity. A robust disaster recovery (DR) strategy is essential to ensure that data remains accessible and recoverable in such scenarios.
+Several projects rely on Amazon S3 as the primary data store for critical functionality, including analysis and visualization. But, unforeseen events such as accidental deletions, data corruption, or regional outages pose so many risks to data availability and integrity. A robust disaster recovery (DR) strategy is essential to ensure that data remains accessible and recoverable in such scenarios.
 
 To address this, various DR solutions must be evaluated based on cost, recovery time objectives (RTO), recovery point objectives (RPO), and compliance requirements. The ideal solution should balance redundancy, cost-effectiveness, and ease of maintenance while minimizing operational overhead through automation as much as possible.
 
