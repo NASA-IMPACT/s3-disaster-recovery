@@ -234,7 +234,7 @@ Total Annual Cost = <span style="color:red">$345.12 </span>
       <td style="border: 1px solid #0000FF; padding: 8px;">$282.62</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$245.76</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$60.00 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$60 (PUT requests)</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$245.76</td>
       <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$834.14</span></td>
     </tr>
@@ -243,27 +243,27 @@ Total Annual Cost = <span style="color:red">$345.12 </span>
       <td style="border: 1px solid #0000FF; padding: 8px;">$282.62</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$60.00 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$60 (PUT requests)</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">Free</td>
       <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$342.62</span></td>
     </tr>
     <tr style="border-bottom: 1px solid #0000FF;">
       <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 3: S3 Backup and Restore using AWS Backup</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$614.40</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$614.4</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">N/A</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$218.40 (Backup API)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$218.4 (Backup API)</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$20.48</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$583.28</span></td>
+      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$853.28</span></td>
     </tr>
     <tr>
       <td style="border: 1px solid #0000FF; padding: 8px;"> <strong>Option 4: Periodic S3 Backups to Another Bucket</strong> </td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$282.60</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$162.60</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">$0</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$120</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;">$60.00 (PUT requests)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">N/A (Reusing SM2A workers)</td>
+      <td style="border: 1px solid #0000FF; padding: 8px;">$62.52 (PUT requests + Lambda)</td>
       <td style="border: 1px solid #0000FF; padding: 8px;">Free</td>
-      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$345.12</span></td>
+      <td style="border: 1px solid #0000FF; padding: 8px;"><span style="color:red">$345.14</span></td>
     </tr>
   </tbody>
 </table>
