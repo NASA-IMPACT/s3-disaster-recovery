@@ -133,7 +133,7 @@ Leverage the existing Self Managed Apache Airflow (SM2A) to orchestrate and auto
 
 In case of accidental delete a lambda function for restoring the object will trigger the restore DAG which will restore the object and copy the file back to the original bucket. For permanent delete you will need to delete the backup object first
 
-### Option 5: Operational Recovery Cloud Archive (ORCA) (<span style="color:red">High-Cost</span>)
+### Option 5: Operational Recovery Cloud Archive (ORCA) (<span style="color:red">High Cost</span>)
 The Operational Recovery Cloud Archive (ORCA) provides a baseline solution for creating, and managing operational backups in the cloud. In addition, best practices and recovery code that manages common baseline recovery scenarios is also maintained. Requirements and use cases for ORCA are derived from the ORCA Working Group.
 
 #### How it works
@@ -391,14 +391,15 @@ Total Annual Cost = <span style="color:red">~$1060+ </span>
 
 ### Option 5: Operational Recovery Cloud Archive (ORCA)
 #### Pros:
-- An Out of the box solution
 - Event-Driven Processing: Using SQS for queueing improves resilience and ensures efficient execution of tasks.
-- Reduced Downtime Risk by automating the recovery
+- Reduced Downtime Risk by automating the recovery.
+
 
 #### Cons:
 - Moderate Operational Overhead: Although it removes the need for a continuously running instance, it still requires - managing Lambda functions, SQS queues, and Step Functions.
 - Increased Complexity: Requires setting up and maintaining multiple AWS services.
 - RDS Dependency: The need for a managed database increases costs and maintenance efforts.
+- Maybe coupled with [cumulus](https://github.com/nasa/cumulus).
 
 
 
