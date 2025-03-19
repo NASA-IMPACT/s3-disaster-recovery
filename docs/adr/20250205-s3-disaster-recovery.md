@@ -133,9 +133,32 @@ Leverage the existing Self Managed Apache Airflow (SM2A) to orchestrate and auto
 
 In case of accidental delete a lambda function for restoring the object will trigger the restore DAG which will restore the object and copy the file back to the original bucket. For permanent delete you will need to delete the backup object first
 
+### Option 5: Operational Recovery Cloud Archive (ORCA) (<span style="color:red">High-Cost</span>)
+The Operational Recovery Cloud Archive (ORCA) provides a baseline solution for creating, and managing operational backups in the cloud. In addition, best practices and recovery code that manages common baseline recovery scenarios is also maintained. Requirements and use cases for ORCA are derived from the ORCA Working Group.
+
+#### How it works
+
+1️⃣ Serverless Workflow
+
+An AWS Step Function orchestrates data ingestion, processing, and retrieval.
+
+Five Lambda functions handle different tasks such as copy to archive, post to catalog...
+
+Two SQS queues are used to decouple operations and manage workflow execution.
+
+2️⃣ Database Management
+
+An RDS instance is still required to store metadata about the archived objects.
+
+The RDS instance needs to be maintained, including backups, scaling, and security updates.
+
+3️⃣ Data Storage & Retrieval
+
+Data is ingested through API requests and stored in the archive.
+
+Retrieval requests are processed via Step Functions, which trigger Lambda functions as needed.
 
 
-- 
 ## Decision Outcome
 
 TBD
@@ -214,6 +237,25 @@ This strategy uses an existing workflow to periodically copy data to another S3 
 
 Total Annual Cost = <span style="color:red">$345.12 </span>
 
+### Option 5: Operational Recovery Cloud Archive (ORCA)
+
+ORCA leverages serverless components, reducing compute costs but still requiring database and messaging services.
+
+- Step Function & Lambda Costs:
+    - Estimated total execution time: 1M invocations per month ($50 per year)
+
+- SQS Costs:
+    - 2 SQS queues processing messages (~$10 per year)
+
+- Database Costs:
+    - RDS instance for metadata storage (~db.t3.medium for performance)
+    - Estimated cost: ~$1000 per year
+
+- Storage & Data Transfer Costs:
+    - Similar to S3 storage costs but with additional management overhead
+
+Total Annual Cost = <span style="color:red">~$1060+ </span> 
+
 ## Estimated Cost Table
 
 <table style="border-collapse: collapse; width: 100%; border: 1px solid #0000FF;">
@@ -264,6 +306,15 @@ Total Annual Cost = <span style="color:red">$345.12 </span>
       <td style="border: 1px solid #0000FF; padding: 5px;">$62.52 (PUT requests + Lambda)</td>
       <td style="border: 1px solid #0000FF; padding: 5px;">Free</td>
       <td style="border: 1px solid #0000FF; padding: 5px;"><span style="color:red">$345.14</span></td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #0000FF; padding: 5px;"> <strong>Option 5: Operational Recovery Cloud Archive (ORCA)</strong> </td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$282.60</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$0</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$60 (Lambda + SQS)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">$1000 (RDS)</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;">Free</td>
+      <td style="border: 1px solid #0000FF; padding: 5px;"><span style="color:red">$1060</span></td>
     </tr>
   </tbody>
 </table>
@@ -338,9 +389,22 @@ Total Annual Cost = <span style="color:red">$345.12 </span>
 - If backup frequency is too low, recent changes may not be included in the latest backup.
 - Copying large volumes of data periodically may impact performance of Airflow
 
+### Option 5: Operational Recovery Cloud Archive (ORCA)
+#### Pros:
+- An Out of the box solution
+- Event-Driven Processing: Using SQS for queueing improves resilience and ensures efficient execution of tasks.
+- Reduced Downtime Risk by automating the recovery
+
+#### Cons:
+- Moderate Operational Overhead: Although it removes the need for a continuously running instance, it still requires - managing Lambda functions, SQS queues, and Step Functions.
+- Increased Complexity: Requires setting up and maintaining multiple AWS services.
+- RDS Dependency: The need for a managed database increases costs and maintenance efforts.
+
+
 
 ## Links
 - [s3-backup](https://n2ws.com/blog/aws-cloud/s3-backup)
 - [s3-pricing](https://aws.amazon.com/s3/pricing/)
 - [s3-backup-pricing](https://aws.amazon.com/backup/pricing/)
 - [s3-replication](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html)
+- [cumulus-orca](https://nasa.github.io/cumulus-orca/)
