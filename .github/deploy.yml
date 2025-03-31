@@ -1,0 +1,65 @@
+name: Deploy CDK Stack
+
+on:
+  push:
+    branches:
+      - develop
+      - staging
+      - production
+
+jobs:
+  define-environment:
+    name: Set environment
+    runs-on: ubuntu-latest
+    outputs:
+      env_name: ${{ steps.define_environment.outputs.env_name }}
+      target_branch: ${{ steps.define_environment.outputs.target_branch }}
+    steps:
+      - name: Set the environment based on the branch
+        id: define_environment
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "target_branch=main" >> $GITHUB_OUTPUT
+            echo "env_name=production" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            echo "target_branch=staging" >> $GITHUB_OUTPUT
+            echo "env_name=staging" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+            echo "target_branch=develop" >> $GITHUB_OUTPUT
+            echo "env_name=develop" >> $GITHUB_OUTPUT
+          fi
+      - name: Print the environment
+        run: echo "The environment is ${{ steps.define_environment.outputs.env_name }}"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: define-environment
+    environment: ${{ needs.define-environment.outputs.env_name }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set environment variables
+        run: |
+          echo "SOURCE_BUCKET_NAME=${{ vars.SOURCE_BUCKET_NAME }}" >> .env
+          echo "DESTINATION_BUCKET_NAME=${{ vars.DESTINATION_BUCKET_NAME }}" >> .env
+          echo "ALLOW_BATCH_REPLICATION=${{ vars.ALLOW_BATCH_REPLICATION }}" >> .env
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install AWS CDK
+        run: npm install -g aws-cdk
+
+      - name: Synthesize CloudFormation templates
+        run: cdk synth
+
+      - name: Deploy CDK stack
+        run: cdk deploy --require-approval never
