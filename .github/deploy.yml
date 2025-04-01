@@ -15,7 +15,7 @@ name: Test CDK Deploy
 on:
   push:
     branches:
-      - add/s3-recovery-stack  # Change to your actual branch name
+      - add/s3-recovery-stack  
 
 
   deploy:
