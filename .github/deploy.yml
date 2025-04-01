@@ -1,16 +1,21 @@
-name: Deploy CDK Stack
+# name: Deploy CDK Stack
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       environment:
+#         description: "Select deployment environment"
+#         required: true
+#         default: "develop"
+#         type: choice
+#         options:
+#           - develop
+#           - staging
+#           - production
+name: Test CDK Deploy
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "Select deployment environment"
-        required: true
-        default: "develop"
-        type: choice
-        options:
-          - develop
-          - staging
-          - production
+  push:
+    branches:
+      - add/s3-recovery-stack  # Change to your actual branch name
 
 
   deploy:
