@@ -17,35 +17,35 @@ on:
     branches:
       - add/s3-recovery-stack  
 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: develop
 
-deploy:
-  runs-on: ubuntu-latest
-  environment: develop
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Set environment variables
+        run: |
+          echo "SOURCE_BUCKET_NAME=${{ vars.SOURCE_BUCKET_NAME }}" >> .env
+          echo "DESTINATION_BUCKET_NAME=${{ vars.DESTINATION_BUCKET_NAME }}" >> .env
+          echo "ALLOW_BATCH_REPLICATION=${{ vars.ALLOW_BATCH_REPLICATION }}" >> .env
 
-    - name: Set environment variables
-      run: |
-        echo "SOURCE_BUCKET_NAME=${{ vars.SOURCE_BUCKET_NAME }}" >> .env
-        echo "DESTINATION_BUCKET_NAME=${{ vars.DESTINATION_BUCKET_NAME }}" >> .env
-        echo "ALLOW_BATCH_REPLICATION=${{ vars.ALLOW_BATCH_REPLICATION }}" >> .env
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-        aws-region: ${{ vars.AWS_REGION }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+      - name: Install AWS CDK
+        run: npm install -g aws-cdk
 
-    - name: Install AWS CDK
-      run: npm install -g aws-cdk
+      - name: Synthesize CloudFormation templates
+        run: cdk synth
 
-    - name: Synthesize CloudFormation templates
-      run: cdk synth
-
-    - name: Deploy CDK stack
-      run: cdk deploy --require-approval never
+      - name: Deploy CDK stack
+        run: cdk deploy --require-approval never
