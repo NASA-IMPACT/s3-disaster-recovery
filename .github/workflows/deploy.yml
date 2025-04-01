@@ -36,11 +36,14 @@ jobs:
           echo "SOURCE_BUCKET_NAME=${{ vars.SOURCE_BUCKET_NAME }}" >> .env
           echo "DESTINATION_BUCKET_NAME=${{ vars.DESTINATION_BUCKET_NAME }}" >> .env
           echo "ALLOW_BATCH_REPLICATION=${{ vars.ALLOW_BATCH_REPLICATION }}" >> .env
+          echo "Env"=${{ vars.ENV }} >> .env
+          cat .env
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.DEPLOYMENT_ROLE_ARN }}
+          role-session-name: ${{ github.repository_owner}}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Install dependencies
