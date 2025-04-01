@@ -22,6 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: develop
 
+    permissions:
+      contents: write
+      pull-requests: write
+
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +40,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-to-assume: ${{ secrets.DEPLOYMENT_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Install dependencies
