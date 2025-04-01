@@ -20,7 +20,7 @@ on:
 
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: develop
 
     steps:
       - name: Checkout repository
