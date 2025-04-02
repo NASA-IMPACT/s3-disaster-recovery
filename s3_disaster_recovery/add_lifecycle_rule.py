@@ -59,9 +59,14 @@ class AddLifeCycleRule(Construct):
                 },
                 physical_resource_id=cr.PhysicalResourceId.of(f"S3LifecycleConfiguration-{bucket_hash}")
             ),
+            on_delete=cr.AwsSdkCall(
+            service="S3",
+            action="deleteBucketLifecycle",
+            parameters={"Bucket": destination_bucket_name},
+            ),
             policy=cr.AwsCustomResourcePolicy.from_statements([
                 iam.PolicyStatement(
-                    actions=["s3:PutBucketLifecycleConfiguration","s3:PutLifecycleConfiguration"],
+                    actions=["s3:PutBucketLifecycleConfiguration","s3:PutLifecycleConfiguration","s3:DeleteBucketLifecycle"],
                     resources=[f"arn:aws:s3:::{destination_bucket_name}"]
                 ),
                 iam.PolicyStatement(
@@ -72,25 +77,6 @@ class AddLifeCycleRule(Construct):
                     actions=["iam:PassRole"],
                     resources=[lifecycle_role.role_arn]
                 ),
-            ]),
-        on_delete=cr.AwsSdkCall(
-        service="S3",
-        action="deleteBucketReplication",
-        parameters={"Bucket": source_bucket_name},
-        ),
-        policy=cr.AwsCustomResourcePolicy.from_statements([
-            iam.PolicyStatement(
-                actions=["s3:PutReplicationConfiguration", "s3:DeleteReplicationConfiguration"],
-                resources=[source_bucket.bucket_arn]
-            ),
-            iam.PolicyStatement(
-                actions=["sts:AssumeRole"],
-                resources=[replication_iam_role.role_arn]
-            ),
-            iam.PolicyStatement(
-                actions=["iam:PassRole"],
-                resources=[replication_iam_role.role_arn]  
-            )
-        ])
+            ])
         )
 

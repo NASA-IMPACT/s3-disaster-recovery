@@ -85,9 +85,17 @@ class SetUpReplication(Construct):
                 },
                 physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
             ),
+            on_delete=cr.AwsSdkCall(
+                service="S3",
+                action="deleteBucketReplication",
+                parameters={
+                    "Bucket": source_bucket_name
+                },
+                physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
+            ),
             policy=cr.AwsCustomResourcePolicy.from_statements([
                 iam.PolicyStatement(
-                    actions=["s3:PutReplicationConfiguration"],
+                    actions=["s3:PutReplicationConfiguration","s3:DeleteReplicationConfiguration"],
                     resources=[source_bucket.bucket_arn]
                 ),
                 iam.PolicyStatement(
@@ -99,27 +107,6 @@ class SetUpReplication(Construct):
                     resources=[replication_iam_role.role_arn]  
                 )
             ]),
-            on_delete=cr.AwsSdkCall(
-                service="S3",
-                action="deleteBucketReplication",
-                parameters={
-                    "Bucket": source_bucket_name
-                },
-                physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
-            ),
-            policy=cr.AwsCustomResourcePolicy.from_statements([
-                iam.PolicyStatement(
-                    actions=["s3:PutReplicationConfiguration", "s3:DeleteReplicationConfiguration"],
-                    resources=[source_bucket.bucket_arn]
-                ),
-                iam.PolicyStatement(
-                    actions=["sts:AssumeRole"],
-                    resources=[replication_iam_role.role_arn]
-                ),
-                iam.PolicyStatement(
-                    actions=["iam:PassRole"],
-                    resources=[replication_iam_role.role_arn]  
-                )
-            ])
+
         )
 
