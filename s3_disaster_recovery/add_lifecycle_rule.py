@@ -16,9 +16,7 @@ class AddLifeCycleRule(Construct):
             self, 
             f"LifecycleManagementRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-        )
-        # Explicit retention policy
-        lifecycle_role.apply_removal_policy(cdk.RemovalPolicy.RETAIN)       
+        )     
 
         # Attach permissions to the role
         lifecycle_role.add_to_policy(iam.PolicyStatement(
@@ -74,6 +72,25 @@ class AddLifeCycleRule(Construct):
                     actions=["iam:PassRole"],
                     resources=[lifecycle_role.role_arn]
                 ),
-            ])
+            ]),
+        on_delete=cr.AwsSdkCall(
+        service="S3",
+        action="deleteBucketReplication",
+        parameters={"Bucket": source_bucket_name},
+        ),
+        policy=cr.AwsCustomResourcePolicy.from_statements([
+            iam.PolicyStatement(
+                actions=["s3:PutReplicationConfiguration", "s3:DeleteReplicationConfiguration"],
+                resources=[source_bucket.bucket_arn]
+            ),
+            iam.PolicyStatement(
+                actions=["sts:AssumeRole"],
+                resources=[replication_iam_role.role_arn]
+            ),
+            iam.PolicyStatement(
+                actions=["iam:PassRole"],
+                resources=[replication_iam_role.role_arn]  
+            )
+        ])
         )
 
