@@ -11,11 +11,11 @@
 #           - develop
 #           - staging
 #           - production
-name: Test CDK Deploy
+name: Deploy CDK Stack
 on:
   push:
     branches:
-      - add/s3-recovery-stack 
+      - main 
 jobs:
   deploy:
     runs-on: ubuntu-latest
