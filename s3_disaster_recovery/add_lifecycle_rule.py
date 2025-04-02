@@ -17,6 +17,8 @@ class AddLifeCycleRule(Construct):
             f"LifecycleManagementRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
         )
+        # Explicit retention policy
+        lifecycle_role.apply_removal_policy(cdk.RemovalPolicy.RETAIN)       
 
         # Attach permissions to the role
         lifecycle_role.add_to_policy(iam.PolicyStatement(

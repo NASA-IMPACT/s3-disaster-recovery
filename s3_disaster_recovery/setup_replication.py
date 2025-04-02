@@ -17,6 +17,8 @@ class SetUpReplication(Construct):
             f"S3ReplicationRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("s3.amazonaws.com")
         )
+        # Explicit retention policy
+        replication_iam_role.apply_removal_policy(cdk.RemovalPolicy.RETAIN)
 
         # Add permissions for source bucket replication
         replication_iam_role.add_to_policy(iam.PolicyStatement(
