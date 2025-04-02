@@ -3,3 +3,4 @@ def generate_bucket_hash(source: str, destination: str) -> str:
     import hashlib
     combined = f"{source}-{destination}".encode()
     return hashlib.sha256(combined).hexdigest()[:8]
+

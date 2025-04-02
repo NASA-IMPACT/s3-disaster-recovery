@@ -54,3 +54,4 @@ class S3DisasterRecoveryStack(Stack):
 
         if allow_batch_replication:
             start_batch = StartBatchJob(self, f"StartBatchJob-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash)
+

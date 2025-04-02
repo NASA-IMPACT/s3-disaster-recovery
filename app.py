@@ -32,3 +32,4 @@ S3DisasterRecoveryStack(app,
     # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
     )
 app.synth()
+

@@ -76,3 +76,4 @@ class AddLifeCycleRule(Construct):
                 ),
             ])
         )
+

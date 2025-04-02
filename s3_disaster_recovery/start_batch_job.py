@@ -21,7 +21,7 @@ class StartBatchJob(Construct):
         )
         # Explicit retention policy
         batch_operations_role.apply_removal_policy(cdk.RemovalPolicy.RETAIN)
-        
+
         # Grant permissions to access buckets
         batch_operations_role.add_to_policy(iam.PolicyStatement(
             actions=[
@@ -139,3 +139,4 @@ class StartBatchJob(Construct):
             ]),
             timeout=cdk.Duration.minutes(30)
         )
+
