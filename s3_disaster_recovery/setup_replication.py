@@ -9,12 +9,12 @@ from constructs import Construct
 
 
 class SetUpReplication(Construct):
-    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str):
+    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str, bucket_hash: str):
         super().__init__(scope, id)
         # Create IAM role for S3 Replication
         replication_iam_role = iam.Role(
             self,
-            "S3ReplicationRole",
+            f"S3ReplicationRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("s3.amazonaws.com")
         )
 
@@ -60,7 +60,7 @@ class SetUpReplication(Construct):
         # Custom Resource to apply S3 Replication Configuration
         custom_resource = cr.AwsCustomResource(
             self, 
-            "S3ReplicationCustomResource",
+            f"S3ReplicationCustomResource-{bucket_hash}",
             on_create=cr.AwsSdkCall(
                 service="S3",
                 action="putBucketReplication",
@@ -70,7 +70,7 @@ class SetUpReplication(Construct):
                         "Role": replication_iam_role.role_arn,
                         "Rules": [
                             {
-                                "ID": "FullBucketReplication",
+                                "ID": f"FullBucketReplication-{bucket_hash}",
                                 "Status": "Enabled",
                                 "Priority": 0,
                                 "DeleteMarkerReplication": {"Status": "Disabled"},
@@ -83,7 +83,7 @@ class SetUpReplication(Construct):
                         ]
                     }
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("S3ReplicationConfig")
+                physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
             ),
             policy=cr.AwsCustomResourcePolicy.from_statements([
                 iam.PolicyStatement(

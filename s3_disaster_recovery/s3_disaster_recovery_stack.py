@@ -17,8 +17,9 @@ from .start_batch_job import StartBatchJob
 
 class S3DisasterRecoveryStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, bucket_hash: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+        self.bucket_hash = bucket_hash 
 
         # Load environment variables
         load_dotenv()
@@ -36,20 +37,20 @@ class S3DisasterRecoveryStack(Stack):
         # Reference the existing source bucket
         source_bucket = s3.Bucket.from_bucket_name(
             self,
-            "ExistingSourceBucket",
+            f"ExistingSourceBucket-{self.bucket_hash}" ,
             source_bucket_name
         )
 
         # Reference the dest source bucket
         destination_bucket = s3.Bucket.from_bucket_name(
             self,
-            "ExistingDestinationBucket",
+            f"ExistingDestinationBucket-{self.bucket_hash}",
             destination_bucket_name
         )
 
-        set_replication = SetUpReplication(self, "SetUpReplication", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name)
+        set_replication = SetUpReplication(self, f"SetUpReplication-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash)
     
-        add_lifecyle = AddLifeCycleRule(self, "AddLifeCycleRule", destination_bucket_name)
+        add_lifecyle = AddLifeCycleRule(self, f"AddLifeCycleRule-{self.bucket_hash}", destination_bucket_name, self.bucket_hash)
 
         if allow_batch_replication:
-            start_batch = StartBatchJob(self, "StartBatchJob", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name)
+            start_batch = StartBatchJob(self, f"StartBatchJob-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash)

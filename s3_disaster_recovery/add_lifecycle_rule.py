@@ -9,11 +9,12 @@ from constructs import Construct
 
 
 class AddLifeCycleRule(Construct):
-    def __init__(self, scope: Construct, id: str, destination_bucket_name: str):
+    def __init__(self, scope: Construct, id: str, destination_bucket_name: str, bucket_hash: str):
         super().__init__(scope, id)
         # Create an IAM role for the custom resource to assume
         lifecycle_role = iam.Role(
-            self, "LifecycleManagementRole",
+            self, 
+            f"LifecycleManagementRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
         )
 
@@ -26,7 +27,7 @@ class AddLifeCycleRule(Construct):
         # Create the custom resource to manage the lifecycle configuration
         custom_resource = cr.AwsCustomResource(
             self,
-            "S3LifecycleCustomResource",
+            f"S3LifecycleCustomResource-{bucket_hash}",
             on_create=cr.AwsSdkCall(
                 service="S3",
                 action="putBucketLifecycleConfiguration",
@@ -35,7 +36,7 @@ class AddLifeCycleRule(Construct):
                     "LifecycleConfiguration":{
                             'Rules': [
                                 {
-                                    'ID': 'RecoveryBucketRule',
+                                    'ID': f'RecoveryBucketRule-{bucket_hash}',
                                     'Status': 'Enabled',
                                     "Prefix": "",
                                     'Transitions': [
@@ -56,7 +57,7 @@ class AddLifeCycleRule(Construct):
                             ]
                         },
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("S3LifecycleConfiguration")
+                physical_resource_id=cr.PhysicalResourceId.of(f"S3LifecycleConfiguration-{bucket_hash}")
             ),
             policy=cr.AwsCustomResourcePolicy.from_statements([
                 iam.PolicyStatement(

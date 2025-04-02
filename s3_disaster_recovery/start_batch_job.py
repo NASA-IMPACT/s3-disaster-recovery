@@ -10,13 +10,13 @@ from constructs import Construct
 
 
 class StartBatchJob(Construct):
-    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str):
+    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str, bucket_hash: str):
         super().__init__(scope, id)
 
         # IAM role for batch operations
         batch_operations_role = iam.Role(
             self,
-            "BatchOperationsRole",
+            f"BatchOperationsRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("batchoperations.s3.amazonaws.com"),
         )
         # Grant permissions to access buckets
@@ -78,7 +78,7 @@ class StartBatchJob(Construct):
 
         batch_resource = cr.AwsCustomResource(
             self,
-            "StartBatchJobResource",
+            f"StartBatchJobResource-{bucket_hash}",
             role=batch_operations_role,
             on_create=cr.AwsSdkCall(
                 service="S3Control",
@@ -117,7 +117,7 @@ class StartBatchJob(Construct):
                     "Description":f'Test3 {source_bucket_name} to {destination_bucket_name}',
                     "ConfirmationRequired":False
                 },
-                physical_resource_id=cr.PhysicalResourceId.of("StartBatchJob")
+                physical_resource_id=cr.PhysicalResourceId.of(f"StartBatchJob-{bucket_hash}")
             ),
             policy=cr.AwsCustomResourcePolicy.from_statements([
                 iam.PolicyStatement(
