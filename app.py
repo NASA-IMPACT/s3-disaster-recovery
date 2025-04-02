@@ -13,7 +13,7 @@ source_bucket_name = os.getenv("SOURCE_BUCKET_NAME")
 destination_bucket_name  = os.getenv("DESTINATION_BUCKET_NAME") 
 bucket_hash = generate_bucket_hash(source_bucket_name, destination_bucket_name)
 S3DisasterRecoveryStack(app, 
-                        f"S3DisasterRecoveryStack-{bucket_hash}",,
+                        f"S3DisasterRecoveryStack-{bucket_hash}",
                         bucket_hash=bucket_hash 
     # If you don't specify 'env', this stack will be environment-agnostic.
     # Account/Region-dependent features and context lookups will not work,
