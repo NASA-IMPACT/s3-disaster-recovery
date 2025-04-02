@@ -1,21 +1,16 @@
-# name: Deploy CDK Stack
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       environment:
-#         description: "Select deployment environment"
-#         required: true
-#         default: "develop"
-#         type: choice
-#         options:
-#           - develop
-#           - staging
-#           - production
-name: Test CDK Deploy
+name: Deploy CDK Stack
 on:
-  push:
-    branches:
-      - add/s3-recovery-stack  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select deployment environment"
+        required: true
+        default: "develop"
+        type: choice
+        options:
+          - develop
+          - staging
+          - production
 
 jobs:
   deploy:
@@ -43,7 +38,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.DEPLOYMENT_ROLE_ARN }}
+          role-to-assume: "arn:aws:iam::${{ secrets.DEPLOYMENT_ACCOUNT }}:role/${{ vars.DEPLOYMENT_ROLE_NAME }}"
           role-session-name: ${{ github.repository_owner}}
           aws-region: ${{ vars.AWS_REGION }}
 
