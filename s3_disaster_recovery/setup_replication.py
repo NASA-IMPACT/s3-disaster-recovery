@@ -20,44 +20,87 @@ class SetUpReplication(Construct):
         # Explicit retention policy
         replication_iam_role.apply_removal_policy(cdk.RemovalPolicy.RETAIN)
 
-        # Add permissions for source bucket replication
-        replication_iam_role.add_to_policy(iam.PolicyStatement(
-            actions=[
-                "s3:GetReplicationConfiguration",
-                "s3:ListBucket",
-                "s3:GetBucketVersioning",
-                "s3:GetBucketLocation",
-                "s3:GetObjectVersionForReplication",
-                "s3:GetObjectVersionAcl",
-                "s3:GetObjectVersionTagging",
-                "s3:InitiateReplication",
-                "s3:GetReplicationConfiguration",
-                "s3:PutInventoryConfiguration",
-                "s3:GetBucketInventoryConfiguration",
-                "s3:CreateJob",
-                "s3:PutJobTagging",
-                "s3control:CreateJob",
-                "s3control:PutJobTagging"
+        # # Add permissions for source bucket replication
+        # replication_iam_role.add_to_policy(iam.PolicyStatement(
+        #     actions=[
+        #         "s3:GetReplicationConfiguration",
+        #         "s3:ListBucket",
+        #         "s3:GetBucketVersioning",
+        #         "s3:GetBucketLocation",
+        #         "s3:GetObjectVersionForReplication",
+        #         "s3:GetObjectVersionAcl",
+        #         "s3:GetObjectVersionTagging",
+        #         "s3:InitiateReplication",
+        #         "s3:GetReplicationConfiguration",
+        #         "s3:PutInventoryConfiguration",
+        #         "s3:GetBucketInventoryConfiguration",
+        #         "s3:CreateJob",
+        #         "s3:PutJobTagging",
+        #         "s3control:CreateJob",
+        #         "s3control:PutJobTagging"
 
-            ],
-            resources=[source_bucket.bucket_arn, f"{source_bucket.bucket_arn}/*"]
-        ))
+        #     ],
+        #     resources=[source_bucket.bucket_arn, f"{source_bucket.bucket_arn}/*"]
+        # ))
 
-        # Add permissions to write to the destination bucket
-        replication_iam_role.add_to_policy(iam.PolicyStatement(
-            actions=["s3:ReplicateObject",
-                "s3:ReplicateDelete",
-                "s3:ReplicateTags",
-                "s3:GetObjectVersionTagging"],
-            resources=[f"{destination_bucket.bucket_arn}/*"]
-        ))
-        replication_iam_role.add_to_policy(iam.PolicyStatement(
-            actions=[
-                "s3:GetBucketVersioning",
-                "s3:GetBucketLocation"
-            ],
-            resources=[destination_bucket.bucket_arn]
-        ))
+        # # Add permissions to write to the destination bucket
+        # replication_iam_role.add_to_policy(iam.PolicyStatement(
+        #     actions=["s3:ReplicateObject",
+        #         "s3:ReplicateDelete",
+        #         "s3:ReplicateTags",
+        #         "s3:GetObjectVersionTagging"],
+        #     resources=[f"{destination_bucket.bucket_arn}/*"]
+        # ))
+        # replication_iam_role.add_to_policy(iam.PolicyStatement(
+        #     actions=[
+        #         "s3:GetBucketVersioning",
+        #         "s3:GetBucketLocation"
+        #     ],
+        #     resources=[destination_bucket.bucket_arn]
+        # ))
+        # Create a managed policy for replication
+        replication_policy = iam.ManagedPolicy(
+            self,
+            f"S3ReplicationPolicy-{bucket_hash}",
+            statements=[
+                iam.PolicyStatement(
+                    actions=[
+                        "s3:GetReplicationConfiguration",
+                        "s3:ListBucket",
+                        "s3:GetBucketVersioning",
+                        "s3:GetBucketLocation",
+                        "s3:GetObjectVersionForReplication",
+                        "s3:GetObjectVersionAcl",
+                        "s3:GetObjectVersionTagging",
+                        "s3:InitiateReplication",
+                        "s3:PutInventoryConfiguration",
+                        "s3:GetBucketInventoryConfiguration",
+                        "s3:CreateJob",
+                        "s3:PutJobTagging",
+                        "s3control:CreateJob",
+                        "s3control:PutJobTagging"
+                    ],
+                    resources=[source_bucket.bucket_arn, f"{source_bucket.bucket_arn}/*"]
+                ),
+                iam.PolicyStatement(
+                    actions=["s3:ReplicateObject",
+                            "s3:ReplicateDelete",
+                            "s3:ReplicateTags",
+                            "s3:GetObjectVersionTagging"],
+                    resources=[f"{destination_bucket.bucket_arn}/*"]
+                ),
+                iam.PolicyStatement(
+                    actions=[
+                        "s3:GetBucketVersioning",
+                        "s3:GetBucketLocation"
+                    ],
+                    resources=[destination_bucket.bucket_arn]
+                )
+            ]
+        )
+
+        # Attach the managed policy to the IAM role
+        replication_iam_role.add_managed_policy(replication_policy)
 
         # Custom Resource to apply S3 Replication Configuration
         custom_resource = cr.AwsCustomResource(
