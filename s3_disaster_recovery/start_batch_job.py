@@ -10,7 +10,7 @@ from constructs import Construct
 
 
 class StartBatchJob(Construct):
-    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str, bucket_hash: str):
+    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str, bucket_hash: str,  permissions_boundary_arn: str):
         super().__init__(scope, id)
 
         # IAM role for batch operations
@@ -18,6 +18,9 @@ class StartBatchJob(Construct):
             self,
             f"BatchOperationsRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("batchoperations.s3.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
+                    self, "PermissionsBoundary", permissions_boundary_arn
+                ) if permissions_boundary_arn else None
         )
 
         # Grant permissions to access buckets

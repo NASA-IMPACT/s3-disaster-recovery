@@ -9,13 +9,16 @@ from constructs import Construct
 
 
 class SetUpReplication(Construct):
-    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str, bucket_hash: str):
+    def __init__(self, scope: Construct, id: str, source_bucket: s3.Bucket, destination_bucket: s3.Bucket, source_bucket_name: str, destination_bucket_name: str, bucket_hash: str,  permissions_boundary_arn: str):
         super().__init__(scope, id)
         # Create IAM role for S3 Replication
         replication_iam_role = iam.Role(
             self,
             f"S3ReplicationRole-{bucket_hash}",
-            assumed_by=iam.ServicePrincipal("s3.amazonaws.com")
+            assumed_by=iam.ServicePrincipal("s3.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
+                    self, "PermissionsBoundary", permissions_boundary_arn
+                ) if permissions_boundary_arn else None            
         )
 
         # Add permissions for source bucket replication

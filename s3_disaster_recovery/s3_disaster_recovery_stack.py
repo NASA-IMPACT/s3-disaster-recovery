@@ -26,6 +26,7 @@ class S3DisasterRecoveryStack(Stack):
         source_bucket_name = os.getenv("SOURCE_BUCKET_NAME") 
         destination_bucket_name = os.getenv("DESTINATION_BUCKET_NAME") 
         allow_batch_replication = os.getenv("ALLOW_BATCH_REPLICATION","false").lower() == "true" 
+        permissions_boundary_arn = os.getenv("PERMISSIONS_BOUNDARY_ARN", None)
 
         print("from env source bucket: ", source_bucket_name)
         print("from env source bucket: ", destination_bucket_name)
@@ -48,10 +49,10 @@ class S3DisasterRecoveryStack(Stack):
             destination_bucket_name
         )
 
-        set_replication = SetUpReplication(self, f"SetUpReplication-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash)
+        set_replication = SetUpReplication(self, f"SetUpReplication-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash, permissions_boundary_arn )
     
-        add_lifecyle = AddLifeCycleRule(self, f"AddLifeCycleRule-{self.bucket_hash}", destination_bucket_name, self.bucket_hash)
+        add_lifecyle = AddLifeCycleRule(self, f"AddLifeCycleRule-{self.bucket_hash}", destination_bucket_name, self.bucket_hash, permissions_boundary_arn)
 
         if allow_batch_replication:
-            start_batch = StartBatchJob(self, f"StartBatchJob-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash)
+            start_batch = StartBatchJob(self, f"StartBatchJob-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash, permissions_boundary_arn)
 

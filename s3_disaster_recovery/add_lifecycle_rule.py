@@ -9,13 +9,16 @@ from constructs import Construct
 
 
 class AddLifeCycleRule(Construct):
-    def __init__(self, scope: Construct, id: str, destination_bucket_name: str, bucket_hash: str):
+    def __init__(self, scope: Construct, id: str, destination_bucket_name: str, bucket_hash: str, permissions_boundary_arn: str):
         super().__init__(scope, id)
         # Create an IAM role for the custom resource to assume
         lifecycle_role = iam.Role(
             self, 
             f"LifecycleManagementRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
+                    self, "PermissionsBoundary", permissions_boundary_arn
+                ) if permissions_boundary_arn else None
         )     
 
         # Attach permissions to the role
