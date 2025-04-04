@@ -27,7 +27,13 @@ class S3DisasterRecoveryStack(Stack):
         source_bucket_name = os.getenv("SOURCE_BUCKET_NAME") 
         destination_bucket_name = os.getenv("DESTINATION_BUCKET_NAME") 
         allow_batch_replication = os.getenv("ALLOW_BATCH_REPLICATION","false").lower() == "true" 
-        permissions_boundary_arn = os.getenv("PERMISSIONS_BOUNDARY_ARN", "")
+        permissions_boundary_policy_name = os.getenv("PERMISSIONS_BOUNDARY_POLICY_NAME", "")
+        aws_account_id = os.getenv("AWS_ACCOUNT_ID", "")
+
+        if permissions_boundary_policy_name and aws_account_id:
+            permissions_boundary_arn = f"arn:aws:iam::{aws_account_id}:policy/{permissions_boundary_policy_name}"
+        else:
+            permissions_boundary_arn = ""
 
         print("from env source bucket: ", source_bucket_name)
         print("from env source bucket: ", destination_bucket_name)
