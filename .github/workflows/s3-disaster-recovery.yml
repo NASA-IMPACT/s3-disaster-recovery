@@ -14,9 +14,6 @@ inputs:
     required: false
     type: string
     default: "us-west-2"
-  env_file:
-    type: string
-    default: ".env"
 
 secrets:
   permissions_boundary:
