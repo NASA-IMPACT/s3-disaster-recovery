@@ -1,0 +1,53 @@
+name: Deploy S3 Disaster Recovery Stack
+
+inputs:
+  source_bucket:
+    required: true
+    type: string
+  destination_bucket:
+    required: true
+    type: string
+  allow_batch_replication:
+    required: true
+    type: string
+  aws_region:
+    required: false
+    type: string
+    default: "us-west-2"
+  env_file:
+    type: string
+    default: ".env"
+
+secrets:
+  permissions_boundary:
+    required: true
+  deployment_account:
+    required: true
+  deployment_role:
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::${{ secrets.deployment-account }}:role/${{ secrets.deployment-role }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Deploy CDK Stack
+      working-directory: infrastructure/s3-disaster-recovery
+      env:
+        SOURCE_BUCKET_NAME: ${{ inputs.source-bucket }}
+        DESTINATION_BUCKET_NAME: ${{ inputs.destination-bucket }}
+        ALLOW_BATCH_REPLICATION: ${{ inputs.allow-batch-replication }}
+        PERMISSIONS_BOUNDARY_ARN: ${{ secrets.permissions-boundary }}
+      run: |
+        pip install -r requirements.txt
+        npm install -g aws-cdk
+        cdk synth
+        cdk deploy --require-approval never
