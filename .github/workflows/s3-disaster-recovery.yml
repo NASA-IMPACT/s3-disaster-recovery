@@ -26,10 +26,9 @@ inputs:
     required: false
     type: string
     default: ''
-  skip_deploy:
-    required: false
+  env-file:
     type: string
-    default: 'false'
+    default: ".env"
 
 secrets:
   permissions_boundary:
@@ -53,7 +52,7 @@ runs:
         if [[ -z "${{ inputs.script_path }}" ]]; then
         ./scripts/sync-env.sh ${{ inputs.env_aws_secret_name }}
         else
-        python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }}
+        python ${{ inputs.script_path }} --secret-id ${{ inputs.env_aws_secret_name }} --env-file ${{ inputs.env_file }}
         fi
 
     - name: Append runtime env vars to .env
