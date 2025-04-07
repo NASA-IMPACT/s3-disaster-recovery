@@ -20,7 +20,7 @@ class StartBatchJob(Construct):
             assumed_by=iam.ServicePrincipal("batchoperations.s3.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
                     self, "PermissionsBoundary", permissions_boundary_arn
-                ) if permissions_boundary_arn else None
+                ) #if permissions_boundary_arn else None
         )
 
         # Grant permissions to access buckets

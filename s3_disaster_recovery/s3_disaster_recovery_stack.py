@@ -38,6 +38,7 @@ class S3DisasterRecoveryStack(Stack):
         print("from env source bucket: ", source_bucket_name)
         print("from env source bucket: ", destination_bucket_name)
         print("from env allow_batch_replication: ", allow_batch_replication)
+        print("permission_boundary_arn: ",permissions_boundary_arn)
         
         if not source_bucket_name or not destination_bucket_name:
             raise ValueError("SOURCE_BUCKET_NAME and DESTINATION_BUCKET_NAME environment variable must be set")

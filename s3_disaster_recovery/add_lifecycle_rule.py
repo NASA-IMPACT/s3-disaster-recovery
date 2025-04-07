@@ -18,7 +18,7 @@ class AddLifeCycleRule(Construct):
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
                     self, "PermissionsBoundary", permissions_boundary_arn
-                ) if permissions_boundary_arn else None
+                )# if permissions_boundary_arn else None
         )     
 
         # Attach permissions to the role
