@@ -62,24 +62,30 @@ runs:
         echo "SOURCE_BUCKET_NAME=${{ inputs.source_bucket }}" >> .env
         echo "DESTINATION_BUCKET_NAME=${{ inputs.destination_bucket }}" >> .env
         echo "ALLOW_BATCH_REPLICATION=${{ inputs.allow_batch_replication }}" >> .env
-
-    - name: Install dependencies
-      shell: bash
-      working-directory: ${{ inputs.dir }}
-      run: pip install -r requirements.txt
-
-    - name: Install AWS CDK
-      shell: bash
-      working-directory: ${{ inputs.dir }}
-      run: npm install -g aws-cdk
-
-    - name: Synthesize CloudFormation templates and Deploy
-      shell: bash
-      working-directory: ${{ inputs.dir }}
-      run: |
-        set -a
-        source ${{ inputs.env_file }}
-        set +a
+        pip install -r requirements.txt
+        npm install -g aws-cdk
         cdk synth
         cdk deploy --require-approval never
+
+
+
+    # - name: Install dependencies
+    #   shell: bash
+    #   working-directory: ${{ inputs.dir }}
+    #   run: pip install -r requirements.txt
+
+    # - name: Install AWS CDK
+    #   shell: bash
+    #   working-directory: ${{ inputs.dir }}
+    #   run: npm install -g aws-cdk
+
+    # - name: Synthesize CloudFormation templates and Deploy
+    #   shell: bash
+    #   working-directory: ${{ inputs.dir }}
+    #   run: |
+    #     set -a
+    #     source ${{ inputs.env_file }}
+    #     set +a
+    #     cdk synth
+    #     cdk deploy --require-approval never
 
