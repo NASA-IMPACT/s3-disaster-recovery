@@ -73,12 +73,13 @@ runs:
       working-directory: ${{ inputs.dir }}
       run: npm install -g aws-cdk
 
-    - name: Synthesize CloudFormation templates
+    - name: Synthesize CloudFormation templates and Deploy
       shell: bash
       working-directory: ${{ inputs.dir }}
-      run: cdk synth
+      run: |
+        set -a
+        source ${{ inputs.env_file }}
+        set +a
+        cdk synth
+        cdk deploy --require-approval never
 
-    - name: Deploy CDK stack
-      shell: bash
-      working-directory: ${{ inputs.dir }}
-      run: cdk deploy --require-approval never
