@@ -62,6 +62,7 @@ runs:
         echo "SOURCE_BUCKET_NAME=${{ inputs.source_bucket }}" >> .env
         echo "DESTINATION_BUCKET_NAME=${{ inputs.destination_bucket }}" >> .env
         echo "ALLOW_BATCH_REPLICATION=${{ inputs.allow_batch_replication }}" >> .env
+        cat .env
 
     - name: Install dependencies
       shell: bash
