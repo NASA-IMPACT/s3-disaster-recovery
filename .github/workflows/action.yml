@@ -68,13 +68,17 @@ runs:
         echo "ALLOW_BATCH_REPLICATION=${{ inputs.allow_batch_replication }}" >> .env
 
     - name: Install dependencies
+      shell: bash
       run: pip install -r requirements.txt
 
     - name: Install AWS CDK
+      shell: bash
       run: npm install -g aws-cdk
 
     - name: Synthesize CloudFormation templates
+      shell: bash
       run: cdk synth
 
     - name: Deploy CDK stack
+      shell: bash
       run: cdk deploy --require-approval never
