@@ -76,7 +76,7 @@ runs:
     - name: Synthesize CloudFormation templates and Deploy
       shell: bash
       working-directory: ${{ inputs.dir }}
-      run: cdk synth cdk deploy --require-approval never
+      run: cdk synth
 
     - name: Deploy
       shell: bash
