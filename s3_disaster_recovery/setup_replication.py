@@ -60,56 +60,56 @@ class SetUpReplication(Construct):
             resources=[destination_bucket.bucket_arn]
         ))
 
-        # # Custom Resource to apply S3 Replication Configuration
-        # custom_resource = cr.AwsCustomResource(
-        #     self, 
-        #     f"S3ReplicationCustomResource-{bucket_hash}",
-        #     on_create=cr.AwsSdkCall(
-        #         service="S3",
-        #         action="putBucketReplication",
-        #         parameters={
-        #             "Bucket": source_bucket_name,
-        #             "ReplicationConfiguration": {
-        #                 "Role": replication_iam_role.role_arn,
-        #                 "Rules": [
-        #                     {
-        #                         "ID": f"FullBucketReplication-{bucket_hash}",
-        #                         "Status": "Enabled",
-        #                         "Priority": 0,
-        #                         "DeleteMarkerReplication": {"Status": "Disabled"},
-        #                         "Filter": {},
-        #                         "Destination": {
-        #                             "Bucket": f"arn:aws:s3:::{destination_bucket_name}",
-        #                             "StorageClass": "STANDARD"
-        #                         }
-        #                     }
-        #                 ]
-        #             }
-        #         },
-        #         physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
-        #     ),
-        #     on_delete=cr.AwsSdkCall(
-        #         service="S3",
-        #         action="deleteBucketReplication",
-        #         parameters={
-        #             "Bucket": source_bucket_name
-        #         },
-        #         physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
-        #     ),
-        #     policy=cr.AwsCustomResourcePolicy.from_statements([
-        #         iam.PolicyStatement(
-        #             actions=["s3:PutReplicationConfiguration","s3:DeleteReplicationConfiguration"],
-        #             resources=[source_bucket.bucket_arn]
-        #         ),
-        #         iam.PolicyStatement(
-        #             actions=["sts:AssumeRole"],
-        #             resources=[replication_iam_role.role_arn]
-        #         ),
-        #         iam.PolicyStatement(
-        #             actions=["iam:PassRole"],
-        #             resources=[replication_iam_role.role_arn]  
-        #         )
-        #     ]),
+        # Custom Resource to apply S3 Replication Configuration
+        custom_resource = cr.AwsCustomResource(
+            self, 
+            f"S3ReplicationCustomResource-{bucket_hash}",
+            on_create=cr.AwsSdkCall(
+                service="S3",
+                action="putBucketReplication",
+                parameters={
+                    "Bucket": source_bucket_name,
+                    "ReplicationConfiguration": {
+                        "Role": replication_iam_role.role_arn,
+                        "Rules": [
+                            {
+                                "ID": f"FullBucketReplication-{bucket_hash}",
+                                "Status": "Enabled",
+                                "Priority": 0,
+                                "DeleteMarkerReplication": {"Status": "Disabled"},
+                                "Filter": {},
+                                "Destination": {
+                                    "Bucket": f"arn:aws:s3:::{destination_bucket_name}",
+                                    "StorageClass": "STANDARD"
+                                }
+                            }
+                        ]
+                    }
+                },
+                physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
+            ),
+            on_delete=cr.AwsSdkCall(
+                service="S3",
+                action="deleteBucketReplication",
+                parameters={
+                    "Bucket": source_bucket_name
+                },
+                physical_resource_id=cr.PhysicalResourceId.of(f"S3ReplicationConfig-{bucket_hash}")
+            ),
+            policy=cr.AwsCustomResourcePolicy.from_statements([
+                iam.PolicyStatement(
+                    actions=["s3:PutReplicationConfiguration","s3:DeleteReplicationConfiguration"],
+                    resources=[source_bucket.bucket_arn]
+                ),
+                iam.PolicyStatement(
+                    actions=["sts:AssumeRole"],
+                    resources=[replication_iam_role.role_arn]
+                ),
+                iam.PolicyStatement(
+                    actions=["iam:PassRole"],
+                    resources=[replication_iam_role.role_arn]  
+                )
+            ]),
 
-        # )
+        )
 
