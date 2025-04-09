@@ -21,6 +21,9 @@ class SetUpReplication(Construct):
                 ) #if permissions_boundary_arn else None            
         )
 
+        # 👉 Disable CDK auto-tags for this role (helps prevent TagRole error)
+        cdk.Tags.of(replication_iam_role).clear()
+
         # Add permissions for source bucket replication
         replication_iam_role.add_to_policy(iam.PolicyStatement(
             actions=[
@@ -106,7 +109,7 @@ class SetUpReplication(Construct):
                     resources=[replication_iam_role.role_arn]
                 ),
                 iam.PolicyStatement(
-                    actions=["iam:PassRole"],
+                    actions=["iam:PassRole","iam:CreateRole","iam:TagRole"],
                     resources=[replication_iam_role.role_arn]  
                 )
             ]),
