@@ -59,10 +59,10 @@ class S3DisasterRecoveryStack(Stack):
 
         set_replication = SetUpReplication(self, f"SetUpReplication-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash, permissions_boundary_arn )
     
-        add_lifecyle = AddLifeCycleRule(self, f"AddLifeCycleRule-{self.bucket_hash}", destination_bucket_name, self.bucket_hash, permissions_boundary_arn)
+        #add_lifecyle = AddLifeCycleRule(self, f"AddLifeCycleRule-{self.bucket_hash}", destination_bucket_name, self.bucket_hash, permissions_boundary_arn)
 
-        if allow_batch_replication:
-            start_batch = StartBatchJob(self, f"StartBatchJob-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash, permissions_boundary_arn)
+        # if allow_batch_replication:
+        #     start_batch = StartBatchJob(self, f"StartBatchJob-{self.bucket_hash}", source_bucket, destination_bucket, source_bucket_name, destination_bucket_name, self.bucket_hash, permissions_boundary_arn)
 
         # # Output Source Bucket Name
         # CfnOutput(self, f"SourceBucketName-{self.bucket_hash}",
