@@ -17,8 +17,8 @@ class AddLifeCycleRule(Construct):
             f"LifecycleManagementRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                    self, "PermissionsBoundary", permissions_boundary_arn
-                )# if permissions_boundary_arn else None
+                    self, "PermissionsBoundaryLC", permissions_boundary_arn
+                ) if permissions_boundary_arn else None
         )     
 
         # Attach permissions to the role
@@ -30,11 +30,11 @@ class AddLifeCycleRule(Construct):
         # Create a custom role for AWS Lambda used by the custom resource with a permissions boundary
         custom_resource_role = iam.Role(
             self,
-            "CustomResourceLambdaExecutionRoleLC-{bucket_hash}",
+            f"CustomResourceLambdaExecutionRoleLC-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                self, "CustomPermissionsBoundaryLC", permissions_boundary_arn
-            )
+                self, f"CustomPermissionsBoundaryLC-{bucket_hash}", permissions_boundary_arn
+            ) if permissions_boundary_arn else None
         )
 
         # Grant the custom resource role permissions

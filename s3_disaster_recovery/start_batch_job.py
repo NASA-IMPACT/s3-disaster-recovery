@@ -19,8 +19,8 @@ class StartBatchJob(Construct):
             f"BatchOperationsRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("batchoperations.s3.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                    self, "PermissionsBoundary", permissions_boundary_arn
-                ) #if permissions_boundary_arn else None
+                    self, "PermissionsBoundaryBatch", permissions_boundary_arn
+                ) if permissions_boundary_arn else None
         )
 
         # Grant permissions to access buckets
@@ -81,11 +81,11 @@ class StartBatchJob(Construct):
         # Create a custom role for AWS Lambda used by the custom resource with a permissions boundary
         custom_resource_role = iam.Role(
             self,
-            "CustomResourceLambdaExecutionRoleBatch-{bucket_hash}",
+            f"CustomResourceLambdaExecutionRoleBatch-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                self, "CustomPermissionsBoundaryBatch", permissions_boundary_arn
-            )
+                self, f"CustomPermissionsBoundaryBatch-{bucket_hash}", permissions_boundary_arn
+            ) if permissions_boundary_arn else None
         )
 
         # Grant the custom resource role permissions

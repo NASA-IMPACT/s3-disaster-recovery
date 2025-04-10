@@ -17,8 +17,8 @@ class SetUpReplication(Construct):
             f"S3ReplicationRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("s3.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                    self, "PermissionsBoundary", permissions_boundary_arn
-                ) #if permissions_boundary_arn else None            
+                    self, "PermissionsBoundaryReplication", permissions_boundary_arn
+                ) if permissions_boundary_arn else None            
         )
 
         # Add permissions for source bucket replication
@@ -63,11 +63,11 @@ class SetUpReplication(Construct):
         # Create a custom role for AWS Lambda used by the custom resource with a permissions boundary
         custom_resource_role = iam.Role(
             self,
-            "CustomResourceLambdaExecutionRoleReplication-{bucket_hash}",
+            f"CustomResourceLambdaExecutionRoleReplication-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                self, "CustomResourcePermissionsBoundaryReplication", permissions_boundary_arn
-            )
+                self, f"CustomResourcePermissionsBoundaryReplication-{bucket_hash}", permissions_boundary_arn
+            ) if permissions_boundary_arn else None
         )
 
         # Grant the custom resource role permissions
