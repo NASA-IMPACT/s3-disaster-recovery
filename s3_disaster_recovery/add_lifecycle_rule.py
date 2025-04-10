@@ -33,7 +33,7 @@ class AddLifeCycleRule(Construct):
             "CustomResourceLambdaExecutionRoleLC-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                self, "PermissionsBoundary", permissions_boundary_arn
+                self, "CustomPermissionsBoundaryLC", permissions_boundary_arn
             )
         )
 

@@ -66,7 +66,7 @@ class SetUpReplication(Construct):
             "CustomResourceLambdaExecutionRoleReplication-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                self, "CustomResourcePermissionsBoundary", permissions_boundary_arn
+                self, "CustomResourcePermissionsBoundaryReplication", permissions_boundary_arn
             )
         )
 

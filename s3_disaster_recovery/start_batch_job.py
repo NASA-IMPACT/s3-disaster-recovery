@@ -84,7 +84,7 @@ class StartBatchJob(Construct):
             "CustomResourceLambdaExecutionRoleBatch-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                self, "PermissionsBoundary", permissions_boundary_arn
+                self, "CustomPermissionsBoundaryBatch", permissions_boundary_arn
             )
         )
 
