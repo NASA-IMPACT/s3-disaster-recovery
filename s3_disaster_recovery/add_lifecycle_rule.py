@@ -28,58 +28,58 @@ class AddLifeCycleRule(Construct):
         ))
 
         # Create the custom resource to manage the lifecycle configuration
-        custom_resource = cr.AwsCustomResource(
-            self,
-            f"S3LifecycleCustomResource-{bucket_hash}",
-            on_create=cr.AwsSdkCall(
-                service="S3",
-                action="putBucketLifecycleConfiguration",
-                parameters={
-                    "Bucket": destination_bucket_name,
-                    "LifecycleConfiguration":{
-                            'Rules': [
-                                {
-                                    'ID': f'RecoveryBucketRule-{bucket_hash}',
-                                    'Status': 'Enabled',
-                                    "Prefix": "",
-                                    'Transitions': [
-                                        {
-                                            'Days': 30,
-                                            'StorageClass': 'STANDARD_IA'
-                                        },
-                                        {
-                                            'Days': 60,
-                                            'StorageClass': 'GLACIER'
-                                        },
-                                        {
-                                            'Days': 180,
-                                            'StorageClass': 'DEEP_ARCHIVE'
-                                        },
-                                    ]
-                                },
-                            ]
-                        },
-                },
-                physical_resource_id=cr.PhysicalResourceId.of(f"S3LifecycleConfiguration-{bucket_hash}")
-            ),
-            on_delete=cr.AwsSdkCall(
-            service="S3",
-            action="deleteBucketLifecycle",
-            parameters={"Bucket": destination_bucket_name},
-            ),
-            policy=cr.AwsCustomResourcePolicy.from_statements([
-                iam.PolicyStatement(
-                    actions=["s3:PutBucketLifecycleConfiguration","s3:PutLifecycleConfiguration","s3:DeleteBucketLifecycle"],
-                    resources=[f"arn:aws:s3:::{destination_bucket_name}"]
-                ),
-                iam.PolicyStatement(
-                    actions=["sts:AssumeRole"],
-                    resources=[lifecycle_role.role_arn]
-                ),
-                iam.PolicyStatement(
-                    actions=["iam:PassRole"],
-                    resources=[lifecycle_role.role_arn]
-                ),
-            ])
-        )
+        # custom_resource = cr.AwsCustomResource(
+        #     self,
+        #     f"S3LifecycleCustomResource-{bucket_hash}",
+        #     on_create=cr.AwsSdkCall(
+        #         service="S3",
+        #         action="putBucketLifecycleConfiguration",
+        #         parameters={
+        #             "Bucket": destination_bucket_name,
+        #             "LifecycleConfiguration":{
+        #                     'Rules': [
+        #                         {
+        #                             'ID': f'RecoveryBucketRule-{bucket_hash}',
+        #                             'Status': 'Enabled',
+        #                             "Prefix": "",
+        #                             'Transitions': [
+        #                                 {
+        #                                     'Days': 30,
+        #                                     'StorageClass': 'STANDARD_IA'
+        #                                 },
+        #                                 {
+        #                                     'Days': 60,
+        #                                     'StorageClass': 'GLACIER'
+        #                                 },
+        #                                 {
+        #                                     'Days': 180,
+        #                                     'StorageClass': 'DEEP_ARCHIVE'
+        #                                 },
+        #                             ]
+        #                         },
+        #                     ]
+        #                 },
+        #         },
+        #         physical_resource_id=cr.PhysicalResourceId.of(f"S3LifecycleConfiguration-{bucket_hash}")
+        #     ),
+        #     on_delete=cr.AwsSdkCall(
+        #     service="S3",
+        #     action="deleteBucketLifecycle",
+        #     parameters={"Bucket": destination_bucket_name},
+        #     ),
+        #     policy=cr.AwsCustomResourcePolicy.from_statements([
+        #         iam.PolicyStatement(
+        #             actions=["s3:PutBucketLifecycleConfiguration","s3:PutLifecycleConfiguration","s3:DeleteBucketLifecycle"],
+        #             resources=[f"arn:aws:s3:::{destination_bucket_name}"]
+        #         ),
+        #         iam.PolicyStatement(
+        #             actions=["sts:AssumeRole"],
+        #             resources=[lifecycle_role.role_arn]
+        #         ),
+        #         iam.PolicyStatement(
+        #             actions=["iam:PassRole"],
+        #             resources=[lifecycle_role.role_arn]
+        #         ),
+        #     ])
+        # )
 
