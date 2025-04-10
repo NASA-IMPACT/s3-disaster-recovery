@@ -19,7 +19,7 @@ from .start_batch_job import StartBatchJob
 class S3DisasterRecoveryStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, bucket_hash: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id,description="Stack for s3 disaster recovery", **kwargs)
         self.bucket_hash = bucket_hash 
 
         # Load environment variables

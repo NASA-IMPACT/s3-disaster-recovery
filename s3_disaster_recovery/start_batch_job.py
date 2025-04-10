@@ -134,7 +134,7 @@ class StartBatchJob(Construct):
                     },
                     "Priority":10,
                     "RoleArn":batch_operations_role.role_arn,
-                    "Description":f'Test3 {source_bucket_name} to {destination_bucket_name}',
+                    "Description":f'{source_bucket_name} to {destination_bucket_name}',
                     "ConfirmationRequired":False
                 },
                 physical_resource_id=cr.PhysicalResourceId.of(f"StartBatchJob-{bucket_hash}")
