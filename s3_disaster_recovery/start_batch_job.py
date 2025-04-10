@@ -156,7 +156,7 @@ class StartBatchJob(Construct):
 
             ]),
             # Assign the custom resource role to the custom resource
-            role=custom_resource_role
+            role=custom_resource_role,
             timeout=cdk.Duration.minutes(30)
         )
 
