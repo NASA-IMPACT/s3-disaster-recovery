@@ -77,6 +77,23 @@ class StartBatchJob(Construct):
             resources=["*"]
         ))
 
+
+        # Create a custom role for AWS Lambda used by the custom resource with a permissions boundary
+        custom_resource_role = iam.Role(
+            self,
+            "CustomResourceLambdaExecutionRoleBatch-{bucket_hash}",
+            assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
+                self, "PermissionsBoundary", permissions_boundary_arn
+            )
+        )
+
+        # Grant the custom resource role permissions
+        custom_resource_role.add_to_policy(iam.PolicyStatement(
+            actions=["sts:AssumeRole"],
+            resources=[replication_iam_role.role_arn]
+        ))
+
         manifest_bucket_arn = f'arn:aws:s3:::{source_bucket_name}'
         report_bucket_arn = f'arn:aws:s3:::{source_bucket_name}'
 
@@ -138,6 +155,8 @@ class StartBatchJob(Construct):
                 )
 
             ]),
+            # Assign the custom resource role to the custom resource
+            role=custom_resource_role
             timeout=cdk.Duration.minutes(30)
         )
 

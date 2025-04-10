@@ -27,6 +27,22 @@ class AddLifeCycleRule(Construct):
             resources=[f"arn:aws:s3:::{destination_bucket_name}"]
         ))
 
+        # Create a custom role for AWS Lambda used by the custom resource with a permissions boundary
+        custom_resource_role = iam.Role(
+            self,
+            "CustomResourceLambdaExecutionRoleLC-{bucket_hash}",
+            assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
+                self, "PermissionsBoundary", permissions_boundary_arn
+            )
+        )
+
+        # Grant the custom resource role permissions
+        custom_resource_role.add_to_policy(iam.PolicyStatement(
+            actions=["sts:AssumeRole"],
+            resources=[replication_iam_role.role_arn]
+        ))
+
         # Create the custom resource to manage the lifecycle configuration
         custom_resource = cr.AwsCustomResource(
             self,
@@ -80,6 +96,7 @@ class AddLifeCycleRule(Construct):
                     actions=["iam:PassRole"],
                     resources=[lifecycle_role.role_arn]
                 ),
-            ])
+            ]),
+            role=custom_resource_role
         )
 
