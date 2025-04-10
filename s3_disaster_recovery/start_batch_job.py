@@ -100,7 +100,6 @@ class StartBatchJob(Construct):
         batch_resource = cr.AwsCustomResource(
             self,
             f"StartBatchJobResource-{bucket_hash}",
-            role=batch_operations_role,
             on_create=cr.AwsSdkCall(
                 service="S3Control",
                 action="createJob",
