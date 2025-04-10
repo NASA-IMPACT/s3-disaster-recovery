@@ -91,7 +91,7 @@ class StartBatchJob(Construct):
         # Grant the custom resource role permissions
         custom_resource_role.add_to_policy(iam.PolicyStatement(
             actions=["sts:AssumeRole"],
-            resources=[replication_iam_role.role_arn]
+            resources=[batch_operations_role.role_arn]
         ))
 
         manifest_bucket_arn = f'arn:aws:s3:::{source_bucket_name}'

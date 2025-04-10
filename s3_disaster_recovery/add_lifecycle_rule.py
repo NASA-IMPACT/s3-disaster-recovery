@@ -40,7 +40,7 @@ class AddLifeCycleRule(Construct):
         # Grant the custom resource role permissions
         custom_resource_role.add_to_policy(iam.PolicyStatement(
             actions=["sts:AssumeRole"],
-            resources=[replication_iam_role.role_arn]
+            resources=[lifecycle_role.role_arn]
         ))
 
         # Create the custom resource to manage the lifecycle configuration
