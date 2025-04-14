@@ -26,7 +26,7 @@ inputs:
     required: false
     type: string
     default: ''
-  env-file:
+  env_file:
     type: string
     default: ".env"
 
@@ -64,13 +64,22 @@ runs:
         echo "ALLOW_BATCH_REPLICATION=${{ inputs.allow_batch_replication }}" >> .env
 
     - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.dir }}
       run: pip install -r requirements.txt
 
     - name: Install AWS CDK
+      shell: bash
+      working-directory: ${{ inputs.dir }}
       run: npm install -g aws-cdk
 
-    - name: Synthesize CloudFormation templates
+    - name: Synthesize CloudFormation templates and Deploy
+      shell: bash
+      working-directory: ${{ inputs.dir }}
       run: cdk synth
 
-    - name: Deploy CDK stack
+    - name: Deploy
+      shell: bash
+      working-directory: ${{ inputs.dir }}
       run: cdk deploy --require-approval never
+

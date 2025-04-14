@@ -19,7 +19,7 @@ class StartBatchJob(Construct):
             f"BatchOperationsRole-{bucket_hash}",
             assumed_by=iam.ServicePrincipal("batchoperations.s3.amazonaws.com"),
             permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
-                    self, "PermissionsBoundary", permissions_boundary_arn
+                    self, "PermissionsBoundaryBatch", permissions_boundary_arn
                 ) if permissions_boundary_arn else None
         )
 
@@ -77,13 +77,29 @@ class StartBatchJob(Construct):
             resources=["*"]
         ))
 
+
+        # Create a custom role for AWS Lambda used by the custom resource with a permissions boundary
+        custom_resource_role = iam.Role(
+            self,
+            f"CustomResourceLambdaExecutionRoleBatch-{bucket_hash}",
+            assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_arn(
+                self, f"CustomPermissionsBoundaryBatch-{bucket_hash}", permissions_boundary_arn
+            ) if permissions_boundary_arn else None
+        )
+
+        # Grant the custom resource role permissions
+        custom_resource_role.add_to_policy(iam.PolicyStatement(
+            actions=["sts:AssumeRole"],
+            resources=[batch_operations_role.role_arn]
+        ))
+
         manifest_bucket_arn = f'arn:aws:s3:::{source_bucket_name}'
         report_bucket_arn = f'arn:aws:s3:::{source_bucket_name}'
 
         batch_resource = cr.AwsCustomResource(
             self,
             f"StartBatchJobResource-{bucket_hash}",
-            role=batch_operations_role,
             on_create=cr.AwsSdkCall(
                 service="S3Control",
                 action="createJob",
@@ -118,7 +134,7 @@ class StartBatchJob(Construct):
                     },
                     "Priority":10,
                     "RoleArn":batch_operations_role.role_arn,
-                    "Description":f'Test3 {source_bucket_name} to {destination_bucket_name}',
+                    "Description":f'{source_bucket_name} to {destination_bucket_name}',
                     "ConfirmationRequired":False
                 },
                 physical_resource_id=cr.PhysicalResourceId.of(f"StartBatchJob-{bucket_hash}")
@@ -138,6 +154,8 @@ class StartBatchJob(Construct):
                 )
 
             ]),
+            # Assign the custom resource role to the custom resource
+            role=custom_resource_role,
             timeout=cdk.Duration.minutes(30)
         )
 
